@@ -1,0 +1,33 @@
+{
+  "name": "d2dknowledge",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "alphavantage": "^2.2.0",
+    "angular": "^1.8.2",
+    "angularjs": "0.0.1",
+    "axios": "^0.21.1",
+    "body-parser": "^1.19.0",
+    "bootstrap": "^5.0.2",
+    "chart.js": "^3.4.1",
+    "cors": "^2.8.5",
+    "engine.io-client": "^3.4.4",
+    "express": "^4.17.1",
+    "http": "0.0.1-security",
+    "https": "^1.0.0",
+    "ng2-charts": "^2.4.3",
+    "nodemon": "^2.0.7",
+    "path": "^0.12.7",
+    "request": "^2.88.2",
+    "request-promise": "^4.2.6",
+    "request-promise-any": "^1.0.9",
+    "socket.io-client": "^2.4.0",
+    "url": "^0.11.0"
+  }
+}

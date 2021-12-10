@@ -1,0 +1,328 @@
+<html ng-app="New">
+<head>
+    <title>D2DKnowledge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="index.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-route.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script><script src="node_modules/chart.js/src/chart.js"></script>
+    <!-- <script src="https://www.unpkg.com/socket.io-client@2.4.0/dist/socket.io.js"></script> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+    <nav id="navbar" class="nav">
+        <a href="">Home</a>
+        <a href="">Stocks</a>
+        <a href="">CryptoCurrencies</a>
+        <a href="javascript:void(0);" style="font-size:15px;" class="icon" onclick="myFunction()">&#9776;</a>
+    </nav>
+    <div>
+        <div ng-controller="Data">
+            <div class="toppers">
+                <div class="category">
+                    <span ng-click="toporderby('-change_24_hour')" ng-style="customStyleGainers">Top Gainers</span>
+                    <span ng-click="toporderby('change_24_hour')" ng-style="customStyleLosers">Top Losers</span>
+                    <span ng-click="toporderby('-volume')" ng-style="customStyleVolume">Top Volume</span></div>
+                <!--<div class="toppertime">
+                <a href="1day">1 Day</a>
+                <a href="7days">7 Daya</a>
+                <a href="30days">30 Days</a>                
+            </div>-->
+                <div class="toppercontainer">
+                    <div ng-repeat="x in cryptocurrencies | orderBy: toporder | limitTo:4" class="topcoinitem">
+                        <div class="topcoinitemup">
+                            <span>{{x.market}}</span><span style="float: right;">{{x.last_price | number : 2}}</span>
+                        </div>
+                        <div class="topcoinitemdown"><span
+                                style="padding: 8px 5px;flex: 3;">{{x.volume | number : 2}}</span><span
+                                style="padding: 8px 12px;width: 0px;font-size: 12px;text-align: center;flex: 1;"
+                                ng-style="x.change_24_hour > 0 ? posprice: negprice;">{{x.change_24_hour > 0 ? (x.change_24_hour | number : 2) : (x.change_24_hour*-1 | number : 2)}}%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <span ng-show='!voldisplay'
+                style="margin: 10px 20px;padding: 25px;display: block;background-color: rgb(180, 180, 180,0.2);"><i class="fa fa-search"
+                    style="margin-right: -25px;overflow: visible;position: absolute;z-index: 2;margin-top: 8px;padding-left: 8px;opacity: 0.4;"></i><input
+                    type="search" placeholder="Search" style="padding-left: 25px;" ng-model="searchval"></span>
+            <div class="datacontainer">
+                <div class="headtab">
+                    <span ng-click="orderby('market')" class="headcon">Coin</span>
+                    <div class="headcon"><span ng-click="price_orderby('last_price')"
+                            style="display: flex;justify-content: center;"><span
+                                ng-style="price_color">Price</span><span
+                                style="display: flex;flex-direction: column;"><i class="fa fa-caret-up"
+                                    style="margin-left: 5px;" ng-style="iconcolorup"></i><i class="fa fa-caret-down"
+                                    style="margin-left: 5px;margin-top: -6px;"
+                                    ng-style="iconcolordown"></i></span></span>
+                    </div>
+                    <div class="headcon"><span ng-click="percentchange_orderby('change_24_hour')" class="headcon"
+                            style="display: flex;justify-content: center;">
+                            <span ng-style="hour_change_color">24h Change</span><span
+                                style="display: flex;flex-direction: column;"><i class="fa fa-caret-up"
+                                    style="margin-left: 5px;" ng-style="iconcolorup_percentchange"></i><i
+                                    class="fa fa-caret-down" style="margin-left: 5px;margin-top: -6px;"
+                                    ng-style="iconcolordown_percentchange"></i></span></span>
+                    </div>
+
+                    <div class="headcon" ng-show='voldisplay'><span ng-click="volume_orderby('volume')"
+                            style="display: flex;text-align: center;justify-content: center;">
+                            <span ng-style="volume_color">Volume</span><span
+                                style="display: flex;flex-direction: column;"><i class="fa fa-caret-up"
+                                    style="margin-left: 5px;" ng-style="iconcolorup_volume"></i><i
+                                    class="fa fa-caret-down" style="margin-left: 5px;margin-top: -6px;"
+                                    ng-style="iconcolordown_volume"></i></span></span></div>
+
+
+
+                    <span ng-show='voldisplay'><i class="fa fa-search"
+                            style="margin-right: -25px;overflow: visible;position: absolute;z-index: 2;margin-top: 8px;padding-left: 8px;opacity: 0.4;"></i><input
+                            type="search" placeholder="Search" style="padding-left: 25px;" ng-model="searchval"></span>
+                </div>
+                <div ng-repeat="x in cryptocurrencies | filter : searchval | orderBy : order " class="datas">
+                    <span><span style="font-weight: bold;">{{x.target}}</span><span
+                            style="color: grey;font-size: small;">/{{x.base}}</span></span>
+                    <span>{{x.last_price | number : 2}}</span>
+                    <div style="text-align: center;padding: 15px 0px;width: 40%;margin: auto;"><span
+                            style="padding: 8px 12px;width: 75px;font-size: 12px;text-align: center;"
+                            ng-style="x.change_24_hour > 0 ? posprice: negprice;">{{x.change_24_hour > 0 ? (x.change_24_hour | number : 2) : (x.change_24_hour*-1 | number : 2)}}%</span>
+                    </div><span ng-show='voldisplay'>{{x.volume | number : 2}}</span>
+                    <span class="tradeBtn"><a href="coin/?coin={{x.symbol}}">Trade</a></span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script>
+        function func() {
+            var x = document.getElementById("navbar");
+            if (x.className != "nav") {
+                x.className = "nav";
+            }
+        }
+        function myFunction() {
+            var x = document.getElementById("navbar");
+            if (x.className === "nav") {
+                x.className += " responsive";
+            }
+            else {
+                x.className = "nav";
+            }
+        }
+        var w = window.innerWidth;
+      var app = angular.module('New', []);
+      app.controller("Data",function($scope,$http){
+//         app.factory('socket', function ($rootScope) {
+
+
+const socketEndpoint = "wss://stream.coindcx.com";
+
+const socket = io(socketEndpoint, {
+    transports: ['websocket']
+});
+//   return {
+//     on: function (eventName, callback) {
+//       socket.on(eventName, function () {  
+//         var args = arguments;
+//         $rootScope.$apply(function () {
+//           callback.apply(socket, args);
+//         });
+//       });
+//     },
+//     emit: function (eventName, data, callback) {
+//       socket.emit(eventName, data, function () {
+//         var args = arguments;
+//         $rootScope.$apply(function () {
+//           if (callback) {
+//             callback.apply(socket, args);
+//           }
+//         });
+//       })
+//     }
+//   };
+// });
+//         app.controller("socket", function ($scope, $http) {
+// function AppCtrl($scope, socket) {
+//             //Join Channel
+            socket.emit('join', {
+                'channelName': "I-BTC_INR",
+            });
+
+            //Listen update on channelName
+            socket.on('depth-update', (response) => {
+                $scope.apires = response.data;
+                console.log($scope.apires);
+            });
+
+//             // leave a channel
+//             socket.emit('leave', {
+//                 'channelName': 'I-INR_BTC'
+//             });
+// }
+            $scope.posprice = { 'background-color': '#04ce58' };
+            $scope.negprice = { 'background-color': '#f74323' };
+            $scope.toporder = '-change_24_hour';
+            $scope.orderby = function (y) {
+                $scope.order = y;
+            }
+            if (w > 800)
+                $scope.voldisplay = true;
+            else
+                $scope.voldisplay = false;
+            $scope.order = 'market';
+            $scope.price_orderby = function () {
+                switch ($scope.order) {
+                    case 'last_price':
+                        y = '-last_price'
+                        $scope.iconcolorup = {};
+                        $scope.iconcolordown = { 'color': "rgb(250, 82, 4)" };
+                        $scope.price_color = { 'color': "rgb(250, 82, 4)" };
+                        break;
+                    case '-last_price':
+                        y = '';
+                        $scope.iconcolordown = {};
+                        $scope.price_color = {};
+                        break;
+                    default:
+                        y = 'last_price';
+                        $scope.iconcolorup = { 'color': "rgb(250, 82, 4)" };
+                        $scope.price_color = { 'color': "rgb(250, 82, 4)" };
+                }
+                $scope.order = y;
+                $scope.iconcolorup_percentchange = {};
+                $scope.iconcolordown_percentchange = {};
+                $scope.hour_change_color = {};
+                $scope.iconcolorup_volume = {};
+                $scope.iconcolordown_volume = {};
+                $scope.volume_color = {};
+            }
+            $scope.percentchange_orderby = function (y) {
+                switch ($scope.order) {
+                    case 'change_24_hour':
+                        y = '-change_24_hour';
+                        $scope.iconcolorup_percentchange = {};
+                        $scope.iconcolordown_percentchange = { 'color': "rgb(250, 82, 4)" };
+                        $scope.hour_change_color = { 'color': "rgb(250, 82, 4)" };
+                        break;
+                    case '-change_24_hour':
+                        y = '';
+                        $scope.iconcolordown_percentchange = {};
+                        $scope.hour_change_color = {};
+                        break;
+                    default:
+                        y = 'change_24_hour';
+                        $scope.iconcolorup_percentchange = { 'color': "rgb(250, 82, 4)" };
+                        $scope.hour_change_color = { 'color': "rgb(250, 82, 4)" };
+                }
+                $scope.order = y;
+                $scope.iconcolorup = {};
+                $scope.iconcolordown = {};
+                $scope.price_color = {};
+                $scope.iconcolorup_volume = {};
+                $scope.iconcolordown_volume = {};
+                $scope.volume_color = {};
+
+            }
+            $scope.volume_orderby = function (y) {
+                switch ($scope.order) {
+                    case 'volume':
+                        y = '-volume'
+                        $scope.iconcolorup_volume = {};
+                        $scope.iconcolordown_volume = { 'color': "rgb(250, 82, 4)" };
+                        $scope.volume_color = { 'color': "rgb(250, 82, 4)" };
+                        break;
+                    case '-volume':
+                        y = '';
+                        $scope.iconcolordown_volume = {};
+                        $scope.volume_color = {};
+                        break;
+                    default:
+                        y = 'volume';
+                        $scope.iconcolorup_volume = { 'color': "rgb(250, 82, 4)" };
+                        $scope.volume_color = { 'color': "rgb(250, 82, 4)" };
+                }
+                $scope.order = y;
+                $scope.iconcolorup = {};
+                $scope.iconcolordown = {};
+                $scope.price_color = {};
+                $scope.iconcolorup_percentchange = {};
+                $scope.iconcolordown_percentchange = {};
+                $scope.hour_change_color = {};
+
+            }
+            $scope.customStyleGainers = {
+                'color': "rgb(250, 82, 4)",
+                'border-bottom': "2.5px rgb(250, 82, 4) solid"
+            }
+            $scope.customStyleLosers = {}
+            $scope.customStyleVolume = {}
+            $scope.toporderby = function (y) {
+                $scope.toporder = y;
+                if (y == '-change_24_hour') {
+                    $scope.customStyleGainers = {
+                        'color': "rgb(250, 82, 4)",
+                        'border-bottom': "2.5px rgb(250, 82, 4) solid"
+                    }
+                    $scope.customStyleLosers = {}
+                    $scope.customStyleVolume = {}
+                }
+                if (y == 'change_24_hour') {
+                    $scope.customStyleLosers = {
+                        'color': "rgb(250, 82, 4)",
+                        'border-bottom': "2.5px rgb(250, 82, 4) solid"
+                    }
+                    $scope.customStyleGainers = {}
+                    $scope.customStyleVolume = {}
+                }
+                if (y == '-volume') {
+                    $scope.customStyleVolume = {
+                        'color': "rgb(250, 82, 4)",
+                        'border-bottom': "2.5px rgb(250, 82, 4) solid"
+                    }
+                    $scope.customStyleLosers = {}
+                    $scope.customStyleGainers = {}
+                }
+            }
+            $http.get("https://api.coindcx.com/exchange/ticker").then(function (response, error) {
+                $scope.cryptocurrencies = response.data;
+                const baseArray = ["INR", "BTC", "USDT", "ETH", "USD", "BNB"];
+                var m = 0;
+                for (var i = 0; i < 100; i++) {
+                    if (Object.keys($scope.cryptocurrencies[i]).length > 6) {
+                        var k = 0;
+                        for (var j in baseArray) {
+                            if ($scope.cryptocurrencies[i].market.endsWith(baseArray[j])) {
+                                var index = $scope.cryptocurrencies[i].market.indexOf(baseArray[j]);
+                                $scope.cryptocurrencies[i].base = $scope.cryptocurrencies[i].market.slice(index);
+                                $scope.cryptocurrencies[i].target = $scope.cryptocurrencies[i].market.slice(0, index);
+                                m++;
+                                $scope.cryptocurrencies[i].volume = parseFloat($scope.cryptocurrencies[i].volume);
+                                $scope.cryptocurrencies[i].last_price = parseFloat($scope.cryptocurrencies[i].last_price);
+                                $scope.cryptocurrencies[i].change_24_hour = parseFloat($scope.cryptocurrencies[i].change_24_hour);
+                                break;
+                            }
+                            else {
+                                k++;
+                            }
+                        }
+                        if (k == 6) {
+                            $scope.cryptocurrencies.splice(i, 1);
+                            i--;
+                        }
+                    }
+                    else {
+                        $scope.cryptocurrencies.splice(i, 1);
+                        i--;
+                    }
+                }
+                $scope.cryptocurrencies.splice(100);
+            });
+            /*$http.get("/coin").then(function(response){
+            console.log(response);
+        });*/
+        });
+
+    </script>
+</body>
+
+</html>
