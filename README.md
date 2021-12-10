@@ -1,1 +1,1 @@
-# D2D_knowlede
+# D2D_knowledge
